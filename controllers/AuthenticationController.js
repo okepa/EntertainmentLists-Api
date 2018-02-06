@@ -19,7 +19,6 @@ class AuthenticationController {
         });
     }
     static login(req, res) {
-        console.log("hello")
         // find the user
         Authentication.findOne({ username: req.body.username }, (err, user) => {
             if (err) {
@@ -42,7 +41,8 @@ class AuthenticationController {
                             // return the information including token as JSON
                             res.json({
                                 success: true,
-                                token: token
+                                token: token,
+                                usernameId: user._id
                             });
                         } else {
                             res.json({ success: false, message: 'Authentication failed. Wrong password.' });
