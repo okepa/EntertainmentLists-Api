@@ -1,4 +1,5 @@
 const Authentication = require('../models/Authentication');
+const BookList = require('../models/BookList')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -13,6 +14,7 @@ class AuthenticationController {
                 if (err) {
                     res.status(400).send(err.message);
                 } else {
+
                     res.status(200).set({ headers: { 'Access-Control-Allow-Origin': '*' } }).send({ success: true });
                 }
             });
