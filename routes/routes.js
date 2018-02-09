@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const indexController = require("../controllers/indexController");
 const authenticationController = require("../controllers/AuthenticationController");
+const bookListController = require("../controllers/BookListController");
 const booksController = require("../controllers/BooksController");
 
 router.get("/", indexController.showIndex);
@@ -13,9 +14,12 @@ router.route("/register")
 router.route("/login")
     .post(authenticationController.login)
 
+router.route("/book-list")
+    .get(authentice, bookListController.getBooksList)
+    .post(authentice, bookListController.addToBookList)
+
 router.route("/books")
-    .get(authentice, booksController.getBooksList)
-    .post(authentice, booksController.addToBookList)
+    .get(authentice, booksController.getBookDetails)
 
 function authentice(req, res, next) {
     // check header or url parameters or post parameters for token
