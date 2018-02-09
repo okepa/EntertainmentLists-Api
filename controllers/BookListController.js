@@ -74,7 +74,6 @@ class BookListController {
                                     }
                                     Book.update({ bookId: req.body.bookId }, req.body, { upsert: true }, (err, book) => {
                                         if (err) {
-                                            console.log(err.message)
                                             res.status(400).send(err.message);
                                         } else {
                                             res.status(201).send({ message: "Added to book list" })

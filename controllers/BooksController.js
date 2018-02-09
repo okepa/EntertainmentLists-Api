@@ -15,6 +15,18 @@ class BooksController {
             }
         });
     }
+
+    static getBookRatings(req, res){
+        Book.find((err, rating) => {
+            if(err){
+                res.status(400).send(err.message);           
+            } else {
+                res.status(200).send({
+                    bookData: rating
+                });
+            }
+        })
+    }
 }
 
 module.exports = BooksController;

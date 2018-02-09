@@ -21,6 +21,9 @@ router.route("/book-list")
 router.route("/books")
     .get(authentice, booksController.getBookDetails)
 
+router.route("/ratings")
+    .get(authentice, booksController.getBookRatings)
+
 function authentice(req, res, next) {
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
