@@ -55,22 +55,34 @@ class BookListController {
                         res.status(400).send(err.message);
                     } else {
                         //need to check if the user has submitted before
-                        if (find != null) {
-                            req.body.bookRatingCount = find.bookRatingCount + 1;
-                            req.body.bookRatingTotal = find.bookRatingTotal + req.body.bookRating;
-                            req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
-                        } else {
-                            req.body.bookRatingCount = 1;
-                            req.body.bookRatingTotal = req.body.bookRating;
-                            req.body.bookRating = bookRatingTotal / bookRatingCount;
-                        }
-                        Book.update({ bookId: req.body.bookId }, req.body, { upsert: true }, (err, book) => {
-                            if (err) {
+                        BookList.findByIdAndUpdate({"usernameId": req.headers["username-id"], "bookId": req.body.bookId}, (err, listFind) => {
+                            if(err){
                                 res.status(400).send(err.message);
                             } else {
-                                res.status(201).send({ message: "Added to book list" })
+                                if(listFind.length != 0){
+                                        req.body.bookRatingTotal = find.bookRatingTotal - listFind.bookRating + req.body.bookRating;
+                                        req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
+                                } else {
+                                    if (find.length != 0) {
+                                        req.body.bookRatingCount = find.bookRatingCount + 1;
+                                        req.body.bookRatingTotal = find.bookRatingTotal + req.body.bookRating;
+                                        req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
+                                    } else {
+                                        req.body.bookRatingCount = 1;
+                                        req.body.bookRatingTotal = req.body.bookRating;
+                                        req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
+                                    }
+                                    Book.update({ bookId: req.body.bookId }, req.body, { upsert: true }, (err, book) => {
+                                        if (err) {
+                                            console.log(err.message)
+                                            res.status(400).send(err.message);
+                                        } else {
+                                            res.status(201).send({ message: "Added to book list" })
+                                        }
+                                    });
+                                }                         
                             }
-                        });
+                        })           
                     }
                 });
             }
