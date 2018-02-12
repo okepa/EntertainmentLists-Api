@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// var ObjectId = mongoose.Schema.ObjectId;
 var BookListSchema = mongoose.Schema({
     usernameId: mongoose.Schema.ObjectId,
     bookId: String,

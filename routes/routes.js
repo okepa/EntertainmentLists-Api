@@ -15,16 +15,20 @@ router.route("/login")
     .post(authenticationController.login)
 
 router.route("/book-list")
-    .get(authentice, bookListController.getBooksList)
-    .post(authentice, bookListController.addToBookList)
+    .get(authenticate, bookListController.getBooksList)
+    .post(authenticate, bookListController.addToBookList)
 
 router.route("/books")
-    .get(authentice, booksController.getBookDetails)
+    .get(authenticate, booksController.getBookDetails)
 
 router.route("/ratings")
     .get(booksController.getBookRatings)
 
-function authentice(req, res, next) {
+router.route("/reviews")
+    .get(booksController.getBookReviews)
+    .post(authenticate, booksController.postBookReviews)
+
+function authenticate(req, res, next) {
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     // decode token
