@@ -24,9 +24,12 @@ router.route("/books")
 router.route("/ratings")
     .get(booksController.getBookRatings)
 
+router.route("/review")
+    .get(booksController.getUserBookReview)
+    .post(authenticate, booksController.postBookReviews)
+
 router.route("/reviews")
     .get(booksController.getBookReviews)
-    .post(authenticate, booksController.postBookReviews)
 
 function authenticate(req, res, next) {
     // check header or url parameters or post parameters for token

@@ -46,13 +46,15 @@ class BookListController {
     }
 
     static addToBookList(req, res) {
+        var usernameId = req.headers["username-id"];
+        req.body.usernameId = usernameId;
         //Check if the user has added it before
-        BookList.findOne({ "usernameId": req.headers["username-id"], "bookId": req.body.bookId }, (err, listFind) => {
+        BookList.findOne({ "usernameId": usernameId, "bookId": req.body.bookId }, (err, listFind) => {
             if (err) {
                 res.status(400).send(err.message);
             } else {
                 //Update book list
-                BookList.update({ "usernameId": req.headers["username-id"], "bookId": req.body.bookId }, req.body, { upsert: true }, (err, bookList) => {
+                BookList.update({ "usernameId": usernameId, "bookId": req.body.bookId }, req.body, { upsert: true }, (err, bookList) => {
                     if (err) {
                         res.status(400).send(err.message);
                     } else {
@@ -63,23 +65,15 @@ class BookListController {
                             } else {
                                 if (find != null) {
                                             if (listFind != null) {
-                                                console.log("1")
                                                 //User is updating their rating
                                                 req.body.bookRatingCount = find.bookRatingCount;
                                                 req.body.bookRatingTotal = find.bookRatingTotal - listFind.bookRating + req.body.bookRating;
                                                 req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
                                             } else {
-                                                console.log("went in here")
                                                 //User is rating for first time
                                                 req.body.bookRatingCount = find.bookRatingCount + 1;
-                                                console.log(req.body.bookRatingCount)
-
                                                 req.body.bookRatingTotal = find.bookRatingTotal + req.body.bookRating;
-                                                console.log(req.body.bookRatingTotal)
-
                                                 req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
-                                                console.log(req.body.bookRatingTotal)
-
                                             }
                                             Book.update({ bookId: req.body.bookId }, req.body, { upsert: true }, (err, book) => {
                                                 if (err) {
@@ -89,7 +83,6 @@ class BookListController {
                                                 }
                                             });
                                 } else {
-                                    console.log("here")
                                     //Never been added before
                                     req.body.bookRatingCount = 1;
                                     req.body.bookRatingTotal = req.body.bookRating;

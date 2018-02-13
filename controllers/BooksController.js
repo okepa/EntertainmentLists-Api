@@ -1,6 +1,6 @@
 const BookList = require('../models/BookList');
 const Book = require('../models/Book');
-const Reviews = require('../models/Reviews')
+const Review = require('../models/Review')
 const ObjectId = require('mongoose').Types.ObjectId;
 
 class BooksController {
@@ -30,8 +30,7 @@ class BooksController {
     }
 
     static getBookReviews(req, res) {
-        var usernameId = new ObjectId(req.headers['username-id']);
-        Reviews.find({"usernameId": usernameId, "bookId": req.query.b}, (err, reviews) => {
+        Review.find({"bookId": req.query.b}, (err, reviews) => {
             if(err){
                 res.status(400).send(err.message);           
             } else {
@@ -42,8 +41,23 @@ class BooksController {
         })
     }
 
+    static getUserBookReview(req, res) {
+        var usernameId = new ObjectId(req.headers['username-id']);
+        Review.findOne({"usernameId": usernameId, "bookId": req.query.b}, (err, review) => {
+            if(err){
+                res.status(400).send(err.message);           
+            } else {
+                res.status(200).send({
+                    review: review
+                });
+            }
+        })
+    }
+
     static postBookReviews(req, res) {
-        Reviews.update({"usernameId": usernameId, "bookId": req.query.b}, {upsert: true}, (err, review) => {
+        var usernameId = new ObjectId(req.headers['username-id']);
+        req.body.usernameId = usernameId;
+        Review.update({"usernameId": usernameId, "bookId": req.body.bookId}, req.body, {upsert: true}, (err, review) => {
             if(err){
                 res.status(400).send(err.message);           
             } else {
