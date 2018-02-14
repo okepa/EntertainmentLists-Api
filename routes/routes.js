@@ -17,6 +17,7 @@ router.route("/login")
 router.route("/book-list")
     .get(authenticate, bookListController.getBooksList)
     .post(authenticate, bookListController.addToBookList)
+    .delete(authenticate, bookListController.deleteFromBookList)
 
 router.route("/books")
     .get(authenticate, booksController.getBookDetails)

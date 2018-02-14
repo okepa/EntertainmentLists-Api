@@ -6,7 +6,6 @@ var BookSchema = mongoose.Schema({
     bookTitle: String,
     bookAuthor: Array,
     bookPublisher: String,
-    bookStatus: String,
     bookRating: Number,
     bookRatingCount: Number,
     bookRatingTotal: Number

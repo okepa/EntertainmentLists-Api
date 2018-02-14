@@ -104,6 +104,40 @@ class BookListController {
             }
         });
     }
+
+    static deleteFromBookList(req, res){
+        var usernameId = req.headers["username-id"];
+        BookList.findOne({ "usernameId": usernameId, "bookId": req.query.b }, (err, find) => {
+            if (err) {
+                res.status(400).send(err.message);
+            } else {
+                BookList.deleteOne({ "usernameId": usernameId, "bookId": req.query.b }, (err, bookList) => {
+                    if (err) {
+                        res.status(400).send(err.message);
+                    } else {
+                        //Need to update book rating
+                        Book.findOne({"bookId": req.query.b }, (err, findBook) => {
+                            if (err) {
+                                res.status(400).send(err.message);
+                            } else {
+                                findBook.bookRatingCount = findBook.bookRatingCount - 1;
+                                findBook.bookRatingTotal = findBook.bookRatingTotal - find.bookRating;
+                                if(findBook.bookRatingTotal == 0) findBook.bookRating = 0
+                                else findBook.bookRating = findBook.bookRatingTotal / findBook.bookRatingCount;
+                                Book.updateOne({"bookId": req.query.b }, {"bookRatingTotal": findBook.bookRatingTotal, "bookRatingCount": findBook.bookRatingCount, "bookRating": findBook.bookRating}, (err, book) => {
+                                    if (err) {
+                                        res.status(400).send(err.message);
+                                    } else {
+                                        res.status(200).send({ message: "Deleted from book list" })
+                                    }
+                                })
+                            }
+                        }) 
+                    }
+                })
+            }
+        })       
+    }
 }
 
 module.exports = BookListController;
