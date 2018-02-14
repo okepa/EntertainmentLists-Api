@@ -14,6 +14,10 @@ router.route("/register")
 router.route("/login")
     .post(authenticationController.login)
 
+router.route("/profile")
+    .get(authenticate, authenticationController.getProfile)
+    .post(authenticate, authenticationController.updateProfile)
+
 router.route("/book-list")
     .get(authenticate, bookListController.getBooksList)
     .post(authenticate, bookListController.addToBookList)

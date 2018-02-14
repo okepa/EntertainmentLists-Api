@@ -67,15 +67,11 @@ class BookListController {
                                     if (listFind != null) {
                                         //User is updating their rating
                                         if (req.body.bookRating == null || req.body.bookRating == "") {
-                                            console.log("here")
-                                            console.log(req.body.bookRating)
                                             req.body.bookRatingCount = find.bookRatingCount - 1;
                                             req.body.bookRatingTotal = find.bookRatingTotal - listFind.bookRating;
                                             if(req.body.bookRatingTotal == 0) req.body.bookRating = 0;
                                             else req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
                                         } else {
-                                            console.log("here1")
-                                            console.log(req.body.bookRating)
                                             req.body.bookRatingCount = find.bookRatingCount + 1;
                                             req.body.bookRatingTotal = find.bookRatingTotal - listFind.bookRating + req.body.bookRating;
                                             req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
@@ -83,14 +79,10 @@ class BookListController {
                                     } else {
                                         //User is rating for first time
                                         if (req.body.bookRating == null || req.body.bookRating == "") {
-                                            console.log("here2")
-                                            console.log(req.body.bookRating)
                                             req.body.bookRatingCount = find.bookRatingCount;
                                             req.body.bookRatingTotal = find.bookRatingTotal;
                                             req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
                                         } else {
-                                            console.log("here3")
-                                            console.log(req.body.bookRating)
                                             req.body.bookRatingCount = find.bookRatingCount + 1;
                                             req.body.bookRatingTotal = find.bookRatingTotal + req.body.bookRating;
                                             req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
@@ -98,7 +90,6 @@ class BookListController {
                                     }
                                     Book.update({ bookId: req.body.bookId }, req.body, { upsert: true }, (err, book) => {
                                         if (err) {
-                                            console.log(err.message)
                                             res.status(400).send(err.message);
                                         } else {
                                             res.status(201).send({ message: "Added to book list" })
@@ -107,14 +98,10 @@ class BookListController {
                                 } else {
                                     //Never been added before
                                     if (req.body.bookRating == null || req.body.bookRating == "") {
-                                        console.log("here4")
-                                        console.log(req.body.bookRating)
                                         req.body.bookRatingCount = 0;
                                         req.body.bookRatingTotal = 0;
                                         req.body.bookRating = 0;
                                     } else {
-                                        console.log("here5")
-                                        console.log(req.body.bookRating)
                                         req.body.bookRatingCount = 1;
                                         req.body.bookRatingTotal = req.body.bookRating;
                                         req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
@@ -122,7 +109,6 @@ class BookListController {
                                     //Update book
                                     Book.update({ bookId: req.body.bookId }, req.body, { upsert: true }, (err, book) => {
                                         if (err) {
-                                            console.log(err.message)
                                             res.status(400).send(err.message);
                                         } else {
                                             res.status(201).send({ message: "Added to book list" })

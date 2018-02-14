@@ -55,6 +55,28 @@ class AuthenticationController {
             }
         });
     }
+
+    static getProfile(req, res){
+        var usernameId = req.headers["username-id"];
+        Authentication.findOne({ _id: usernameId }, (err, user) => {
+            if (err) {
+                res.status(400).send(err.message);
+            } else {
+                res.status(200).send({user: user});
+            }
+        });
+    }
+
+    static updateProfile(req, res){
+        var usernameId = req.headers["username-id"];
+        Authentication.updateOne({ _id: usernameId }, {"email": req.body.email}, (err, user) => {
+            if (err) {
+                res.status(400).send(err.message);
+            } else {
+                res.status(200).send({message: "Profile has been updated"});
+            }
+        });
+    }
 }
 
 module.exports = AuthenticationController;
