@@ -38,6 +38,7 @@ router.route("/reviews")
 
 router.route("/user-reviews")
     .get(authenticate, booksController.getAllUserReviews)
+    .delete(authenticate, booksController.deleteUserReview)
 
 function authenticate(req, res, next) {
     // check header or url parameters or post parameters for token

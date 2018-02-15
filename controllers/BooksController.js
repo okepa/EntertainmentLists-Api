@@ -70,13 +70,25 @@ class BooksController {
     //Get all users book reviews
     static getAllUserReviews(req, res){
         var usernameId = new ObjectId(req.headers['username-id']);
-        req.body.usernameId = usernameId;
         Review.find({"usernameId": usernameId}, (err, reviews) => {
             if(err){
                 res.status(400).send(err.message);           
             } else {
                 res.status(201).send({
                     reviews: reviews
+                });
+            }
+        })
+    }
+    //Delete user review
+    static deleteUserReview(req, res) {
+        var usernameId = new ObjectId(req.headers['username-id']);
+        Review.deleteOne({"usernameId": usernameId, "bookId": req.query.b }, (err, reviews) => {
+            if(err){
+                res.status(400).send(err.message);           
+            } else {
+                res.status(200).send({
+                    message: "Review has been delete"
                 });
             }
         })
