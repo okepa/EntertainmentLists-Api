@@ -88,7 +88,7 @@ class BooksController {
                 res.status(400).send(err.message);           
             } else {
                 res.status(200).send({
-                    message: "Review has been delete"
+                    message: "Review has been deleted"
                 });
             }
         })
