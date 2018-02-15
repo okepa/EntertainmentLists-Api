@@ -4,9 +4,9 @@ const Review = require('../models/Review')
 const ObjectId = require('mongoose').Types.ObjectId;
 
 class BooksController {
-    static getBookDetails(req, res){
+    static getBookDetails(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
-        BookList.findOne({ "usernameId": usernameId, "bookId": req.query.b}, (err, bookData) => {
+        BookList.findOne({ "usernameId": usernameId, "bookId": req.query.b }, (err, bookData) => {
             if (err) {
                 res.status(400).send(err.message);
             } else {
@@ -17,10 +17,10 @@ class BooksController {
         });
     }
 
-    static getBookRatings(req, res){
+    static getBookRatings(req, res) {
         Book.find((err, rating) => {
-            if(err){
-                res.status(400).send(err.message);           
+            if (err) {
+                res.status(400).send(err.message);
             } else {
                 res.status(200).send({
                     bookData: rating
@@ -30,9 +30,9 @@ class BooksController {
     }
     //Get book reviews for one book
     static getBookReviews(req, res) {
-        Review.find({"bookId": req.query.b}, (err, reviews) => {
-            if(err){
-                res.status(400).send(err.message);           
+        Review.find({ "bookId": req.query.b }, (err, reviews) => {
+            if (err) {
+                res.status(400).send(err.message);
             } else {
                 res.status(200).send({
                     reviews: reviews
@@ -43,9 +43,9 @@ class BooksController {
     //get user book review for one book
     static getUserBookReview(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
-        Review.findOne({"usernameId": usernameId, "bookId": req.query.b}, (err, review) => {
-            if(err){
-                res.status(400).send(err.message);           
+        Review.findOne({ "usernameId": usernameId, "bookId": req.query.b }, (err, review) => {
+            if (err) {
+                res.status(400).send(err.message);
             } else {
                 res.status(200).send({
                     review: review
@@ -57,9 +57,9 @@ class BooksController {
     static postBookReviews(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
         req.body.usernameId = usernameId;
-        Review.update({"usernameId": usernameId, "bookId": req.body.bookId}, req.body, {upsert: true}, (err, review) => {
-            if(err){
-                res.status(400).send(err.message);           
+        Review.update({ "usernameId": usernameId, "bookId": req.body.bookId }, req.body, { upsert: true }, (err, review) => {
+            if (err) {
+                res.status(400).send(err.message);
             } else {
                 res.status(201).send({
                     message: "Review has been submitted"
@@ -68,24 +68,32 @@ class BooksController {
         })
     }
     //Get all users book reviews
-    static getAllUserReviews(req, res){
+    static getAllUserReviews(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
-        Review.find({"usernameId": usernameId}, (err, reviews) => {
-            if(err){
-                res.status(400).send(err.message);           
+        var page = (req.query.p - 1) * 5;
+        Review.find({ "usernameId": usernameId }).skip(page).limit(5).exec((err, reviews) => {
+            if (err) {
+                res.status(400).send(err.message);
             } else {
-                res.status(201).send({
-                    reviews: reviews
+                Review.count({ "usernameId": usernameId }, (err, reviewsTotal) => {
+                    if (err) {
+                        res.status(400).send(err.message);
+                    } else {
+                        res.status(201).send({
+                            reviews: reviews,
+                            reviewsTotal: reviewsTotal
+                        });
+                    }
                 });
             }
-        })
+        });
     }
     //Delete user review
     static deleteUserReview(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
-        Review.deleteOne({"usernameId": usernameId, "bookId": req.query.b }, (err, reviews) => {
-            if(err){
-                res.status(400).send(err.message);           
+        Review.deleteOne({ "usernameId": usernameId, "bookId": req.query.b }, (err, reviews) => {
+            if (err) {
+                res.status(400).send(err.message);
             } else {
                 res.status(200).send({
                     message: "Review has been deleted"
