@@ -28,7 +28,7 @@ class BooksController {
             }
         })
     }
-
+    //Get book reviews for one book
     static getBookReviews(req, res) {
         Review.find({"bookId": req.query.b}, (err, reviews) => {
             if(err){
@@ -40,7 +40,7 @@ class BooksController {
             }
         })
     }
-
+    //get user book review for one book
     static getUserBookReview(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
         Review.findOne({"usernameId": usernameId, "bookId": req.query.b}, (err, review) => {
@@ -53,7 +53,7 @@ class BooksController {
             }
         })
     }
-
+    //Create book review
     static postBookReviews(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
         req.body.usernameId = usernameId;
@@ -63,6 +63,20 @@ class BooksController {
             } else {
                 res.status(201).send({
                     message: "Review has been submitted"
+                });
+            }
+        })
+    }
+    //Get all users book reviews
+    static getAllUserReviews(req, res){
+        var usernameId = new ObjectId(req.headers['username-id']);
+        req.body.usernameId = usernameId;
+        Review.find({"usernameId": usernameId}, (err, reviews) => {
+            if(err){
+                res.status(400).send(err.message);           
+            } else {
+                res.status(201).send({
+                    reviews: reviews
                 });
             }
         })
