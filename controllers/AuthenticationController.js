@@ -14,7 +14,7 @@ class AuthenticationController {
                 if (err) {
                     res.status(400).send(err.message);
                 } else {
-                    res.status(200).send({ success: true });
+                    res.status(200).send({ message: "Successfully registered" });
                 }
             });
         });
