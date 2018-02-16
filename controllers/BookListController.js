@@ -72,7 +72,8 @@ class BookListController {
                                             if(req.body.bookRatingTotal == 0) req.body.bookRating = 0;
                                             else req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
                                         } else {
-                                            req.body.bookRatingCount = find.bookRatingCount + 1;
+                                            if(listFind.bookRating == null) req.body.bookRatingCount = find.bookRatingCount + 1;
+                                            else req.body.bookRatingCount = find.bookRatingCount;
                                             req.body.bookRatingTotal = find.bookRatingTotal - listFind.bookRating + req.body.bookRating;
                                             req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
                                         }
