@@ -30,12 +30,20 @@ class BooksController {
     }
     //Get book reviews for one book
     static getBookReviews(req, res) {
-        Review.find({ "bookId": req.query.b }, (err, reviews) => {
+        var page = (req.query.p - 1) * 5;
+        Review.find({ "bookId": req.query.b }).skip(page).limit(5).exec((err, reviews) => {
             if (err) {
                 res.status(400).send(err.message);
             } else {
-                res.status(200).send({
-                    reviews: reviews
+                Review.count({ "bookId": req.query.b }, (err, reviewsTotal) => {
+                    if (err) {
+                        res.status(400).send(err.message);
+                    } else {
+                        res.status(201).send({
+                            reviews: reviews,
+                            reviewsTotal: reviewsTotal
+                        });
+                    }
                 });
             }
         })
@@ -57,8 +65,10 @@ class BooksController {
     static postBookReviews(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
         req.body.usernameId = usernameId;
-        Review.update({ "usernameId": usernameId, "bookId": req.body.bookId }, req.body, { upsert: true }, (err, review) => {
+        console.log(req.body)
+        Review.update({ "usernameId": usernameId, "bookId": req.body.bookId }, {$set: {bookId: req.body.bookId, reviewTitle: req.body.reviewTitle, reviewContent: req.body.reviewContent, reviewRating: req.body.reviewRating}}, { upsert: true }, (err, review) => {
             if (err) {
+                console.log(err.message)
                 res.status(400).send(err.message);
             } else {
                 res.status(201).send({
