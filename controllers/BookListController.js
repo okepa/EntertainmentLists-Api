@@ -54,8 +54,9 @@ class BookListController {
                 res.status(400).send(err.message);
             } else {
                 //Update book list
-                BookList.update({ "usernameId": usernameId, "bookId": req.body.bookId }, req.body, { upsert: true }, (err, bookList) => {
+                BookList.update({ "usernameId": usernameId, "bookId": req.body.bookId }, {$set: {usernameId: req.body.usernameId, bookId: req.body.bookId, bookTitle: req.body.bookTitle, bookAuthor: req.body.bookAuthor, bookPublisher: req.body.bookPublisher, bookStatus: req.body.bookStatus, bookRating: req.body.bookRating}}, { upsert: true }, (err, bookList) => {
                     if (err) {
+                        console.log(err.message)
                         res.status(400).send(err.message);
                     } else {
                         //Find if the book has been added before
@@ -89,7 +90,7 @@ class BookListController {
                                             req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
                                         }
                                     }
-                                    Book.update({ bookId: req.body.bookId }, req.body, { upsert: true }, (err, book) => {
+                                    Book.update({ bookId: req.body.bookId }, {$set: {usernameId: req.body.usernameId, bookId: req.body.bookId, bookTitle: req.body.bookTitle, bookAuthor: req.body.bookAuthor, bookPublisher: req.body.bookPublisher, bookRating: req.body.bookRating, bookRatingTotal: req.body.bookRatingTotal, bookRatingCount: req.body.bookRatingCount}}, { upsert: true }, (err, book) => {
                                         if (err) {
                                             res.status(400).send(err.message);
                                         } else {
@@ -108,7 +109,7 @@ class BookListController {
                                         req.body.bookRating = req.body.bookRatingTotal / req.body.bookRatingCount;
                                     }
                                     //Update book
-                                    Book.update({ bookId: req.body.bookId }, req.body, { upsert: true }, (err, book) => {
+                                    Book.update({ bookId: req.body.bookId }, {$set: {usernameId: req.body.usernameId, bookId: req.body.bookId, bookTitle: req.body.bookTitle, bookAuthor: req.body.bookAuthor, bookPublisher: req.body.bookPublisher, bookRating: req.body.bookRating, bookRatingTotal: req.body.bookRatingTotal, bookRatingCount: req.body.bookRatingCount}}, { upsert: true }, (err, book) => {
                                         if (err) {
                                             res.status(400).send(err.message);
                                         } else {

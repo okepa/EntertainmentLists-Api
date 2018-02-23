@@ -64,23 +64,49 @@ class BooksController {
     //Create book review
     static postBookReviews(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
-        req.body.usernameId = usernameId;
-        console.log(req.body)
-        Review.update({ "usernameId": usernameId, "bookId": req.body.bookId }, {$set: {bookId: req.body.bookId, reviewTitle: req.body.reviewTitle, reviewContent: req.body.reviewContent, reviewRating: req.body.reviewRating}}, { upsert: true }, (err, review) => {
+        Book.findOne({bookId: req.body.bookId}, (err, book) => {
             if (err) {
-                console.log(err.message)
                 res.status(400).send(err.message);
             } else {
-                res.status(201).send({
-                    message: "Review has been submitted"
-                });
+                if(book == null){
+                    //Book doesn't exist
+                    req.body.bookRating = 0;
+                    req.body.bookRatingCount = 0;
+                    req.body.bookRatingTotal = 0
+                    Book.update({ bookId: req.body.bookId }, {$set: {usernameId: req.body.usernameId, bookId: req.body.bookId, bookTitle: req.body.bookTitle, bookAuthor: req.body.bookAuthor, bookPublisher: req.body.bookPublisher, bookRating: req.body.bookRating, bookRatingTotal: req.body.bookRatingTotal, bookRatingCount: req.body.bookRatingCount}}, { upsert: true }, (err, book) => {
+                        if (err) {
+                            res.status(400).send(err.message);
+                        } else {
+                            Review.update({ "usernameId": usernameId, "bookId": req.body.bookId }, {$set: {usernameId: usernameId, bookId: req.body.bookId, reviewTitle: req.body.reviewTitle, reviewContent: req.body.reviewContent, reviewRating: req.body.reviewRating}}, { upsert: true }, (err, review) => {
+                                if (err) {
+                                    res.status(400).send(err.message);
+                                } else {
+                                    res.status(201).send({
+                                        message: "Review has been submitted"
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } else{
+                    Review.update({ "usernameId": usernameId, "bookId": req.body.bookId }, {$set: {usernameId: usernameId, bookId: req.body.bookId, reviewTitle: req.body.reviewTitle, reviewContent: req.body.reviewContent, reviewRating: req.body.reviewRating}}, { upsert: true }, (err, review) => {
+                        if (err) {
+                            res.status(400).send(err.message);
+                        } else {
+                            res.status(201).send({
+                                message: "Review has been submitted"
+                            });
+                        }
+                    });
+                }
             }
-        })
+        });        
     }
     //Get all users book reviews
     static getAllUserReviews(req, res) {
         var usernameId = new ObjectId(req.headers['username-id']);
         var page = (req.query.p - 1) * 5;
+        var bookIdArray = [];
         Review.find({ "usernameId": usernameId }).skip(page).limit(5).exec((err, reviews) => {
             if (err) {
                 res.status(400).send(err.message);
@@ -89,10 +115,33 @@ class BooksController {
                     if (err) {
                         res.status(400).send(err.message);
                     } else {
-                        res.status(201).send({
-                            reviews: reviews,
-                            reviewsTotal: reviewsTotal
-                        });
+                        for(var i = 0; i < reviews.length; i++){
+                            bookIdArray.push(reviews[i].bookId);
+                        }
+                        //console.log(bookIdArray)
+                        //Get book title from bookId
+                        Book.find({ "bookId": { $in: bookIdArray}, "usernameId": usernameId}, (err, bookName) => {
+                            if (err) {
+                                res.status(400).send(err.message);
+                            } else {
+                                for(var i = 0; i < bookName.length; i++){
+                                    for(var j = 0; j < reviews.length; j++){
+                                        if(bookName[i].bookId == reviews[j].bookId){
+                                            console.log("here")
+                                            reviews[j].bookTitle = bookName[i].bookTitle
+                                        }
+                                    }
+                                }
+                                //console.log(reviews)
+                                res.status(201).send({
+                                    reviews: reviews,
+                                    reviewsTotal: reviewsTotal,
+                                    bookName: bookName
+                                });
+                            }
+                        })
+
+                        
                     }
                 });
             }
