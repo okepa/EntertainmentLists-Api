@@ -118,17 +118,21 @@ class BooksController {
                         for(var i = 0; i < reviews.length; i++){
                             bookIdArray.push(reviews[i].bookId);
                         }
-                        //console.log(bookIdArray)
                         //Get book title from bookId
-                        Book.find({ "bookId": { $in: bookIdArray}, "usernameId": usernameId}, (err, bookName) => {
+                        Book.find({ "bookId": { $in: bookIdArray}}, (err, bookName) => {
                             if (err) {
                                 res.status(400).send(err.message);
                             } else {
+                                //console.log(bookName)
                                 for(var i = 0; i < bookName.length; i++){
                                     for(var j = 0; j < reviews.length; j++){
                                         if(bookName[i].bookId == reviews[j].bookId){
                                             console.log("here")
-                                            reviews[j].bookTitle = bookName[i].bookTitle
+                                            //console.log(bookName[i].bookTitle);
+                                            var temp = reviews[j].toObject();
+                                            temp.bookTitle = bookName[i].bookTitle;
+                                            reviews[j] = temp;
+                                            console.log(reviews[j].bookTitle)
                                         }
                                     }
                                 }
