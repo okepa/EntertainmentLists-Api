@@ -23,6 +23,9 @@ router.route("/book-list")
     .post(authenticate, bookListController.addToBookList)
     .delete(authenticate, bookListController.deleteFromBookList)
 
+router.route("/other-user")
+    .get(bookListController.getUserBookList)
+
 router.route("/books")
     .get(authenticate, booksController.getBookDetails)
 

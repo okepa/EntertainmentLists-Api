@@ -159,6 +159,47 @@ class BookListController {
             }
         })
     }
+
+    static getUserBookList(req, res){
+        var readingStatus = [];
+        var readStatus = [];
+        var planToReadStatus = [];
+        var abandonedStatus = [];
+        BookList.find({ "usernameId": req.query.username, "bookStatus": "Reading" }, (err, bookList) => {
+            if (err) {
+                res.status(400).send(err.message);
+            } else {
+                readingStatus = bookList;
+                BookList.find({ "usernameId": req.query.username, "bookStatus": "Read" }, (err, bookList) => {
+                    if (err) {
+                        res.status(400).send(err.message);
+                    } else {
+                        readStatus = bookList;
+                        BookList.find({ "usernameId": req.query.username, "bookStatus": "Plan To Read" }, (err, bookList) => {
+                            if (err) {
+                                res.status(400).send(err.message);
+                            } else {
+                                planToReadStatus = bookList;
+                                BookList.find({ "usernameId": req.query.username, "bookStatus": "Abandoned" }, (err, bookList) => {
+                                    if (err) {
+                                        res.status(400).send(err.message);
+                                    } else {
+                                        abandonedStatus = bookList;
+                                        res.status(200).send({
+                                            readingStatus: readingStatus,
+                                            readStatus: readStatus,
+                                            planToReadStatus: planToReadStatus,
+                                            abandonedStatus: abandonedStatus
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
 }
 
 module.exports = BookListController;

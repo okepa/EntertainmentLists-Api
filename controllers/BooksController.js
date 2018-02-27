@@ -31,7 +31,7 @@ class BooksController {
     //Get book reviews for one book
     static getBookReviews(req, res) {
         var page = (req.query.p - 1) * 5;
-        Review.find({ "bookId": req.query.b }).skip(page).limit(5).exec((err, reviews) => {
+        Review.find({ "bookId": req.query.b }).skip(page).limit(5).populate('usernameId', 'username').exec((err, reviews) => {
             if (err) {
                 res.status(400).send(err.message);
             } else {
@@ -123,20 +123,15 @@ class BooksController {
                             if (err) {
                                 res.status(400).send(err.message);
                             } else {
-                                //console.log(bookName)
                                 for(var i = 0; i < bookName.length; i++){
                                     for(var j = 0; j < reviews.length; j++){
                                         if(bookName[i].bookId == reviews[j].bookId){
-                                            console.log("here")
-                                            //console.log(bookName[i].bookTitle);
                                             var temp = reviews[j].toObject();
                                             temp.bookTitle = bookName[i].bookTitle;
                                             reviews[j] = temp;
-                                            console.log(reviews[j].bookTitle)
                                         }
                                     }
                                 }
-                                //console.log(reviews)
                                 res.status(201).send({
                                     reviews: reviews,
                                     reviewsTotal: reviewsTotal,

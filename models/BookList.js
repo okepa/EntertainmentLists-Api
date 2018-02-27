@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 var BookListSchema = mongoose.Schema({
-    usernameId: mongoose.Schema.ObjectId,
-    bookId: String,
+    usernameId: {type: mongoose.Schema.ObjectId, ref: 'Authentication'},
+    bookId: {type: String, ref: 'Book'},
     bookTitle: String,
     bookAuthor: Array,
     bookPublisher: String,
