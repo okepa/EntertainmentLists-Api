@@ -5,6 +5,7 @@ const indexController = require("../controllers/indexController");
 const authenticationController = require("../controllers/AuthenticationController");
 const bookListController = require("../controllers/BookListController");
 const booksController = require("../controllers/BooksController");
+const usersController = require("../controllers/UsersController")
 
 router.get("/", indexController.showIndex);
 
@@ -17,6 +18,12 @@ router.route("/login")
 router.route("/profile")
     .get(authenticate, authenticationController.getProfile)
     .post(authenticate, authenticationController.updateProfile)
+
+router.route("/user")
+    .get(usersController.getUser)
+    
+router.route("/users")
+    .get(usersController.getAllUsers)
 
 router.route("/book-list")
     .get(authenticate, bookListController.getBooksList)
