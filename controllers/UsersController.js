@@ -18,6 +18,18 @@ class UsersController {
         })
     }
 
+    static searchUsers(req, res) {
+        Authentication.find({ username: { $regex:  req.body.username } }).select('_id username').exec((err, users) => {
+            if (err) {
+                res.status(400).send(err.message);
+            } else {
+                res.status(200).send({
+                    users: users
+                });
+            }
+        })
+    }
+
     static getProfile(req, res) {
         var usernameId = req.headers["username-id"];
         Authentication.findOne({ _id: usernameId }).select('_id username').exec((err, user) => {

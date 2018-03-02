@@ -27,6 +27,7 @@ router.route("/user-profile")
 
 router.route("/users")
     .get(usersController.getAllUsers)
+    .post(usersController.searchUsers)
 
 router.route("/book-list")
     .get(authenticate, bookListController.getBooksList)
