@@ -15,13 +15,16 @@ router.route("/register")
 router.route("/login")
     .post(authenticationController.login)
 
-router.route("/profile")
+router.route("/user-information")
     .get(authenticate, authenticationController.getProfile)
     .post(authenticate, authenticationController.updateProfile)
 
-router.route("/user")
-    .get(usersController.getUser)
-    
+router.route("/profile")
+    .get(authenticate, usersController.getProfile)
+
+router.route("/user-profile")
+    .get(usersController.getUserProfile)
+
 router.route("/users")
     .get(usersController.getAllUsers)
 
@@ -30,7 +33,7 @@ router.route("/book-list")
     .post(authenticate, bookListController.addToBookList)
     .delete(authenticate, bookListController.deleteFromBookList)
 
-router.route("/other-user")
+router.route("/user-book-list")
     .get(bookListController.getUserBookList)
 
 router.route("/books")
