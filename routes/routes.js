@@ -54,6 +54,9 @@ router.route("/user-reviews")
     .get(authenticate, booksController.getAllUserReviews)
     .delete(authenticate, booksController.deleteUserReview)
 
+router.route("/other-user-reviews")
+    .get(booksController.getOtherUserReviews)
+
 function authenticate(req, res, next) {
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
