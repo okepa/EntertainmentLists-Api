@@ -19,7 +19,10 @@ class UsersController {
     }
 
     static searchUsers(req, res) {
-        Authentication.find({ username: { $regex:  req.body.username } }).select('_id username').exec((err, users) => {
+        var _id;
+        if (req.headers["username-id"] == "null") _id = new ObjectId(null);
+        else _id = new ObjectId(req.headers['username-id']);
+        Authentication.find({ username: { $regex:  req.body.username }, _id: { $ne: { _id } } }).select('_id username').exec((err, users) => {
             if (err) {
                 res.status(400).send(err.message);
             } else {
