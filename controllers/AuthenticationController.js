@@ -6,19 +6,30 @@ const bcrypt = require('bcrypt');
 class AuthenticationController {
 
     static register(req, res) {
-        const saltRounds = 10;
-        const plainTextPassword = req.body.password;
-        bcrypt.hash(plainTextPassword, saltRounds).then((hash) => {
-            // Store hash in your password DB.
-            Authentication.create({ username: req.body.username, password: hash, email: req.body.email }, (err, createUser) => {
-                if (err) {
-                    res.status(400).send(err.message);
+        Authentication.find({ username: req.body.username }, (err, findUser) => {
+            if (err) {
+                res.status(400).send(err.message);
+            } else {
+                if (findUser == null) {
+                    const saltRounds = 10;
+                    const plainTextPassword = req.body.password;
+                    bcrypt.hash(plainTextPassword, saltRounds).then((hash) => {
+                        // Store hash in your password DB.
+                        Authentication.create({ username: req.body.username, password: hash, email: req.body.email }, (err, createUser) => {
+                            if (err) {
+                                res.status(400).send(err.message);
+                            } else {
+                                res.status(200).send({ message: "Successfully registered" });
+                            }
+                        });
+                    });
                 } else {
-                    res.status(200).send({ message: "Successfully registered" });
+                    res.status(409).send({ message: "This username already exists" });
                 }
-            });
-        });
+            }
+        })
     }
+
     static login(req, res) {
         // find the user
         Authentication.findOne({ username: req.body.username }, (err, user) => {
@@ -56,24 +67,24 @@ class AuthenticationController {
         });
     }
 
-    static getProfile(req, res){
+    static getProfile(req, res) {
         var usernameId = req.headers["username-id"];
         Authentication.findOne({ _id: usernameId }, (err, user) => {
             if (err) {
                 res.status(400).send(err.message);
             } else {
-                res.status(200).send({user: user});
+                res.status(200).send({ user: user });
             }
         });
     }
 
-    static updateProfile(req, res){
+    static updateProfile(req, res) {
         var usernameId = req.headers["username-id"];
-        Authentication.updateOne({ _id: usernameId }, {"email": req.body.email}, (err, user) => {
+        Authentication.updateOne({ _id: usernameId }, { "email": req.body.email }, (err, user) => {
             if (err) {
                 res.status(400).send(err.message);
             } else {
-                res.status(200).send({message: "Profile has been updated"});
+                res.status(200).send({ message: "Profile has been updated" });
             }
         });
     }
