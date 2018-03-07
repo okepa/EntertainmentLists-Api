@@ -12,6 +12,7 @@
     "ejs": "^2.5.5",
     "express": "^4.14.0",
     "jsonwebtoken": "^8.1.1",
-    "mongoose": "^5.0.1"
+    "mongoose": "^5.0.1",
+    "sendmail": "^1.2.0"
   }
 }

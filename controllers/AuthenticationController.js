@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 class AuthenticationController {
 
     static register(req, res) {
-        Authentication.find({ username: req.body.username }, (err, findUser) => {
+        Authentication.findOne({ username: req.body.username }, (err, findUser) => {
             if (err) {
                 res.status(400).send(err.message);
             } else {
