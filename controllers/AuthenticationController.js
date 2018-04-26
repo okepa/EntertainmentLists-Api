@@ -15,7 +15,7 @@ class AuthenticationController {
                     const plainTextPassword = req.body.password;
                     bcrypt.hash(plainTextPassword, saltRounds).then((hash) => {
                         // Store hash in your password DB.
-                        Authentication.create({ username: req.body.username, password: hash, email: req.body.email }, (err, createUser) => {
+                        Authentication.create({ username: req.body.username, password: hash, email: req.body.email, active: false }, (err, createUser) => {
                             if (err) {
                                 res.status(400).send(err.message);
                             } else {
