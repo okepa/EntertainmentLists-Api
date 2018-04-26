@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 class AuthenticationController {
 
     static register(req, res) {
-        Authentication.findOne({ username: req.body.username }, (err, findUser) => {
+        Authentication.findOne({ $or: [{username: req.body.username}, {email: req.body.email}] }, (err, findUser) => {
             if (err) {
                 res.status(400).send(err.message);
             } else {
@@ -24,7 +24,11 @@ class AuthenticationController {
                         });
                     });
                 } else {
-                    res.status(409).send({ message: "This username already exists" });
+                    if(findUser.username = req.body.username){
+                        res.status(409).send({ message: "This username already exists" });
+                    } else if(findUser.email = req.body.email) {
+                        res.status(409).send({ message: "This email has already been used to register" });
+                    }
                 }
             }
         })
