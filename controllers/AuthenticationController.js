@@ -18,7 +18,7 @@ class AuthenticationController {
                     const uuid = uuidv5();
                     bcrypt.hash(plainTextPassword, saltRounds).then((hash) => {
                         // Store hash in your password DB.
-                        Authentication.create({ username: req.body.username, password: hash, email: req.body.email, active: false, activationCode: uuid }, (err, createUser) => {
+                        Authentication.create({ username: req.body.username, password: hash, email: req.body.email, activated: false, activationCode: uuid }, (err, createUser) => {
                             if (err) {
                                 res.status(400).send(err.message);
                             } else {
