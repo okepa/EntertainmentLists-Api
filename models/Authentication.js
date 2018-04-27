@@ -4,7 +4,8 @@ var AuthenticationSchema = mongoose.Schema({
     username: String,
     password: String,
     email: String,
-    active: Boolean
+    active: Boolean,
+    activationCode: String
 });
 
 module.exports = mongoose.model('Authentication', AuthenticationSchema);

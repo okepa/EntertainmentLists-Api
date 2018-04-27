@@ -1,7 +1,9 @@
 const Authentication = require('../models/Authentication');
+const EmailService = require('../services/emailService')
 const BookList = require('../models/BookList')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const uuidv5 = require('uuid/v5');
 
 class AuthenticationController {
 
@@ -13,13 +15,16 @@ class AuthenticationController {
                 if (findUser == null) {
                     const saltRounds = 10;
                     const plainTextPassword = req.body.password;
+                    const uuid = uuidv5();
                     bcrypt.hash(plainTextPassword, saltRounds).then((hash) => {
                         // Store hash in your password DB.
-                        Authentication.create({ username: req.body.username, password: hash, email: req.body.email, active: false }, (err, createUser) => {
+                        Authentication.create({ username: req.body.username, password: hash, email: req.body.email, active: false, activationCode: uuid }, (err, createUser) => {
                             if (err) {
                                 res.status(400).send(err.message);
                             } else {
                                 res.status(200).send({ message: "Successfully registered" });
+                                //Send Confirmation Email
+                                EmailService.sendRegistrationConfirmationEmail(req.body.username, req.body.email, uuid);
                             }
                         });
                     });
@@ -30,6 +35,16 @@ class AuthenticationController {
                         res.status(409).send({ message: "This email has already been used to register" });
                     }
                 }
+            }
+        })
+    }
+
+    static activateAccount(req, res) {
+        Authentication.findOneAndUpdate({activationCode: req.query.activationcode}, {$set: {active: true}}, (err, user) => {
+            if(err) {
+                res.status(400).send(err.message);
+            } else {
+                res.status(200).send({ message: "Successfully activated account" });
             }
         })
     }
