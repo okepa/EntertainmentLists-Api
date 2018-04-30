@@ -3,7 +3,7 @@ const EmailService = require('../services/emailService')
 const BookList = require('../models/BookList')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const uuidv5 = require('uuid/v5');
+const uuidv1 = require('uuid/v1');
 
 class AuthenticationController {
 
@@ -15,16 +15,20 @@ class AuthenticationController {
                 if (findUser == null) {
                     const saltRounds = 10;
                     const plainTextPassword = req.body.password;
-                    const uuid = uuidv5();
+                    const uuid = uuidv1();
                     bcrypt.hash(plainTextPassword, saltRounds).then((hash) => {
                         // Store hash in your password DB.
-                        Authentication.create({ username: req.body.username, password: hash, email: req.body.email, activated: false, activationCode: uuid }, (err, createUser) => {
+                        Authentication.create({ username: req.body.username, password: hash, email: req.body.email, validated: false, activationCode: uuid }, (err, createUser) => {
                             if (err) {
                                 res.status(400).send(err.message);
                             } else {
-                                res.status(200).send({ message: "Successfully registered" });
                                 //Send Confirmation Email
-                                EmailService.sendRegistrationConfirmationEmail(req.body.username, req.body.email, uuid);
+                                EmailService.sendRegistrationConfirmationEmail(req.body.username, req.body.email, uuid).then((response) => {
+                                    console.log("success")
+                                    res.status(200).send({ message: "Successfully registered" });
+                                }).catch((err) => {
+                                    res.status(400).send(err.message);
+                                });
                             }
                         });
                     });

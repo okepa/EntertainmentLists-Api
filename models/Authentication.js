@@ -4,7 +4,7 @@ var AuthenticationSchema = mongoose.Schema({
     username: String,
     password: String,
     email: String,
-    activated: Boolean,
+    validated: Boolean,
     activationCode: String
 });
 
