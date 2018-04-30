@@ -12,8 +12,11 @@ router.get("/", indexController.showIndex);
 router.route("/register")
     .post(authenticationController.register)
 
-router.route("/activate-account")
-    .get(authenticationController.activateAccount)
+router.route("/validate-account")
+    .get(authenticationController.validateAccount)
+
+router.route("/forgotten-password")
+    .get(authenticationController.forgottenPassword)
 
 router.route("/login")
     .post(authenticationController.login)

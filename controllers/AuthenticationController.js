@@ -24,8 +24,7 @@ class AuthenticationController {
                             } else {
                                 //Send Confirmation Email
                                 EmailService.sendRegistrationConfirmationEmail(req.body.username, req.body.email, uuid).then((response) => {
-                                    console.log("success")
-                                    res.status(200).send({ message: "Successfully registered" });
+                                    res.status(200).send({ message: "Email sent" });
                                 }).catch((err) => {
                                     res.status(400).send(err.message);
                                 });
@@ -33,9 +32,9 @@ class AuthenticationController {
                         });
                     });
                 } else {
-                    if(findUser.username = req.body.username){
+                    if(findUser.username == req.body.username){
                         res.status(409).send({ message: "This username already exists" });
-                    } else if(findUser.email = req.body.email) {
+                    } else if(findUser.email == req.body.email) {
                         res.status(409).send({ message: "This email has already been used to register" });
                     }
                 }
@@ -43,14 +42,42 @@ class AuthenticationController {
         })
     }
 
-    static activateAccount(req, res) {
-        Authentication.findOneAndUpdate({activationCode: req.query.activationcode}, {$set: {active: true}}, (err, user) => {
+    static validateAccount(req, res) {
+        Authentication.findOneAndUpdate({validationCode: req.query.validationcode}, {$set: {active: true}}, (err, user) => {
             if(err) {
                 res.status(400).send(err.message);
             } else {
                 res.status(200).send({ message: "Successfully activated account" });
             }
-        })
+        });
+    }
+
+    static forgottenPassword(req, res) {
+        //Check if the username and email belong to one account and the email is validated
+        Authentication.findOne({username: req.body.username, email: req.body.email, validated: true}, (err, user) => {
+            if(err){
+                res.status(400).send(err.message);
+            } else {
+                if(user != null){
+                    const uuid = uuidv1();
+                    bcrypt.hash(uuid).then((hash) => {
+                        Authentication.updateOne({username: req.body.username, email: req.body.email}, {set: {forgottenPasswordCode: hash}}, (err, updateUser) => {
+                            if(err){
+                                res.status(400).send(err.message);
+                            } else {
+                                EmailService.sendForgottenPasswordEmail(req.body.username, req.body.email, uuid).then(response => {
+                                    res.status(200).send({ message: "Email sent" });
+                                }).catch(err => {
+                                    res.status(400).send(err.message);
+                                });
+                            }
+                        });
+                });
+                } else {
+                    res.status(401).send({ message: "The email account does not exist for this username or the email account has not been validated" });
+                }
+            }
+        });  
     }
 
     static login(req, res) {
