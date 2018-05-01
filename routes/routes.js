@@ -16,7 +16,7 @@ router.route("/validate-account")
     .get(authenticationController.validateAccount)
 
 router.route("/forgotten-password")
-    .get(authenticationController.forgottenPassword)
+    .post(authenticationController.forgottenPassword)
 
 router.route("/login")
     .post(authenticationController.login)

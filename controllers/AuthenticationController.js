@@ -74,7 +74,7 @@ class AuthenticationController {
                         });
                 });
                 } else {
-                    res.status(401).send({ message: "The email account does not exist for this username or the email account has not been validated" });
+                    res.status(401).send({ message: "The email account does not exist for this username or the email account has not been validated"});
                 }
             }
         });  
