@@ -61,7 +61,7 @@ class AuthenticationController {
                 if(user != null){
                     const uuid = uuidv1();
                     bcrypt.hash(uuid).then((hash) => {
-                        Authentication.updateOne({username: req.body.username, email: req.body.email}, {set: {forgottenPasswordCode: hash}}, (err, updateUser) => {
+                        Authentication.updateOne({username: req.body.username, email: req.body.email}, {$set: {forgottenPasswordCode: hash}}, (err, updateUser) => {
                             if(err){
                                 res.status(400).send(err.message);
                             } else {
@@ -78,6 +78,16 @@ class AuthenticationController {
                 }
             }
         });  
+    }
+
+    static changePassword(res, res) {
+        Authentication.findOneAndUpdate({username: req.body.username}, {$set: {password: res.body.password}}, (err, user) => {
+            if(err){
+                res.status(400).send(err.message);
+            } else {
+                res.status(200).send({ message: "Email updated" });
+            }
+        })
     }
 
     static login(req, res) {

@@ -38,7 +38,7 @@ class EmailService {
             html: ` <p>Hello ${username}</p>
                     <p>You have requested a new password</p>
                     <p>Please click the link below to reset your password</p>
-                    <p>localhost:3000/reset-password?forgottenPasswordCode=${forgottenPasswordCode}</p>`
+                    <p>localhost:3000/change-password?forgottenPasswordCode=${forgottenPasswordCode}</p>`
             }
             sgMail.send(msg).then(() => {
                 console.log("email sent");
