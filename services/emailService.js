@@ -4,7 +4,6 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 class EmailService {
     static sendRegistrationConfirmationEmail(username, email, activationCode){
         return new Promise((resolve, reject) => {
-            console.log(process.env.SENDGRID_API_KEY)
             var msg = {
                 to: email,
                 from: process.env.EMAIL_ADDRESS,
@@ -12,7 +11,7 @@ class EmailService {
                 html: ` <p>Hello ${username}</p>
                         <p>You have recently registered for Entertainment List.</p>
                         <p>Please click the link below to activate your account</p>
-                        <p>localhost:3000/activate-account?activationcode=${activationCode}</p>`
+                        <p>${process.env.WEB}activate-account?activationcode=${activationCode}</p>`
             };
             sgMail.send(msg).then(() => {
                 console.log("email sent");
@@ -38,7 +37,7 @@ class EmailService {
             html: ` <p>Hello ${username}</p>
                     <p>You have requested a new password</p>
                     <p>Please click the link below to reset your password</p>
-                    <p>localhost:3000/change-password?forgottenPasswordCode=${forgottenPasswordCode}</p>`
+                    <p>${process.env.WEB}change-password?forgottenPasswordCode=${forgottenPasswordCode}</p>`
             }
             sgMail.send(msg).then(() => {
                 console.log("email sent");

@@ -80,14 +80,25 @@ class AuthenticationController {
         });  
     }
 
-    static changePassword(res, res) {
-        Authentication.findOneAndUpdate({username: req.body.username}, {$set: {password: res.body.password}}, (err, user) => {
-            if(err){
-                res.status(400).send(err.message);
+    static changePassword(req, res) {
+        //Decrypt validationCode
+        
+        bcrypt.compare(req.body.validationCode, user.password).then((response) => {
+            // check if validationCode matches
+            if (response) {
+                Authentication.findOneAndUpdate({validationCode: req.body.validationCode}, {$set: {password: res.body.password}}, (err, user) => {
+                    if(err){
+                        res.status(400).send(err.message);
+                    } else {
+                        res.status(200).send({ message: "Password updated" });
+                    }
+                });
             } else {
-                res.status(200).send({ message: "Email updated" });
+                res.json({ success: false, message: 'Validation code has expired' });
             }
-        })
+        }).catch(err => {
+            res.status(400).send(err.message);
+        });  
     }
 
     static login(req, res) {
